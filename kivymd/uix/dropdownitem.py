@@ -120,7 +120,7 @@ class _Triangle(ThemableBehavior, Widget):
     pass
 
 
-class MDDropDownItem(ThemableBehavior, BoxLayout):
+class MDDropDownItemBehavior(ThemableBehavior):
     items = ListProperty()
     """String list of items for a drop-down list."""
 
@@ -175,6 +175,8 @@ class MDDropDownItem(ThemableBehavior, BoxLayout):
         self.current_item = name_item
         self._drop_list.dismiss()
 
+
+class MDDropDownItem(MDDropDownItemBehavior, BoxLayout):
     def on_touch_down(self, touch):
         if self.collide_point(touch.x, touch.y) and self._list_menu:
             self._drop_list = MDDropdownMenu(
