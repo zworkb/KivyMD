@@ -255,6 +255,11 @@ class MDDropdownMenu(ThemableBehavior, BoxLayout):
     """Width of the rectangle of the menu
     """
 
+    anim_duration = NumericProperty(0.3)
+    """animation duration for menu popup
+    if set to 0, the menu pops up immediately
+    """
+
     _center = BooleanProperty(False)
 
     def __init__(self, **kwargs):
@@ -357,7 +362,7 @@ class MDDropdownMenu(ThemableBehavior, BoxLayout):
                 y=tar_y,
                 width=target_width,
                 height=target_height,
-                duration=0.3,
+                duration=self.anim_duration,
                 transition="out_quint",
             )
             menu.pos = c
