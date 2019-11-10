@@ -1819,8 +1819,38 @@ drop_item = """
 
     MDRaisedButton:
         pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-        text: 'Chek Item'
+        text: 'Check Item'
         on_release: toast(dropdown_item.current_item)
+"""
+
+combobox = """
+#:import MDComboBox kivymd.uix.combobox.MDComboBox
+
+<ComboBox@Screen>
+    name:'combobox'
+    orientation: 'vertical'
+
+
+    FloatLayout:
+
+        MDComboBox:
+            id: dropdown_item
+            pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+            size_hint:(.3, None)
+            items: ["item %s" % i for i in range(100)]
+            text:'Item '
+
+        MDComboBox:
+            id: dropdown_item_lower
+            pos_hint: {'center_x': 0.5, 'center_y': 0.45}
+            size_hint:(.3, None)
+            items: ["item %s" % i for i in range(100)]
+            text:'Item '
+
+        MDRaisedButton:
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            text: 'Check Item'
+            on_release: toast(dropdown_item.text)
 """
 
 drop_item_list = """
@@ -1935,6 +1965,13 @@ class Screens(object):
             "Factory": "Factory.DropItemList()",
             "name_screen": "drop item list",
             "source_code": "Components-DropDownItem-with-ScrollView.md",
+            "object": None,
+        },
+        "ComboBox": {
+            "kv_string": combobox,
+            "Factory": "Factory.ComboBox()",
+            "name_screen": "combobox",
+            # "source_code": "Components-DropDownItem.md",
             "object": None,
         },
         "Popup Screen": {

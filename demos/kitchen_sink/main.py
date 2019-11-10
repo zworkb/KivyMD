@@ -235,6 +235,13 @@ main_widget_kv = """
             app.open_drop_items_examples()
 
     NavigationDrawerIconButton:
+        text: "ComboBox"
+        icon: app.drawer_item_icons.get(self.text, 'checkbox-blank-circle')
+        on_release:
+            app.show_screen("ComboBox")
+            app.set_title_toolbar(self.text)
+
+    NavigationDrawerIconButton:
         text: "Expansion Panel"
         icon: app.drawer_item_icons.get(self.text, 'checkbox-blank-circle')
         on_release:
@@ -567,6 +574,7 @@ class KitchenSink(MDApp, Screens):
             "Dialogs": "window-open",
             "Download File": "download",
             "Dropdown Item": "arrow-down-drop-circle",
+            "ComboBox": "arrow-down-drop-circle",
             "Expansion Panel": "arrow-expand-vertical",
             "Floating Buttons": "format-float-right",
             "Files Manager": "file-tree",
