@@ -70,13 +70,19 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import ListProperty, BooleanProperty, StringProperty, ObjectProperty
+from kivy.properties import (
+    ListProperty,
+    BooleanProperty,
+    StringProperty,
+    ObjectProperty,
+)
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivymd.uix.dropdownitem import MDDropDownItemBehavior
 from kivymd.uix.menu import MDDropdownMenu
 
-Builder.load_string("""
+Builder.load_string(
+    """
 <MDComboBox>:
     label_item:label_item
     canter:False
@@ -97,11 +103,13 @@ Builder.load_string("""
         size_hint:None, None
         pos_hint:{'center_x':.5, 'center_y':1}
         size:10,10
-""")
+"""
+)
 
 
 class MDComboBox(MDDropDownItemBehavior, FloatLayout):
     """"""
+
     items_unfiltered = ListProperty()
     """
     all items without filter before filtering
@@ -116,7 +124,7 @@ class MDComboBox(MDDropDownItemBehavior, FloatLayout):
 
     anchor = ObjectProperty(None)
 
-    def __init__(self,  **kw):
+    def __init__(self, **kw):
         super().__init__(**kw)
         self.dropdown_bg = App.get_running_app().theme_cls.bg_normal
         Clock.schedule_once(self.after_init)
@@ -128,16 +136,24 @@ class MDComboBox(MDDropDownItemBehavior, FloatLayout):
     def on_label_text(self, _, text):
         self.text = text
         if self.case_sensitive:
-            self.items = [item for item in self.items_unfiltered if item.startswith(text)]
+            self.items = [
+                item for item in self.items_unfiltered if item.startswith(text)
+            ]
         else:
-            self.items = [item for item in self.items_unfiltered if item.lower().startswith(text.lower())]
+            self.items = [
+                item
+                for item in self.items_unfiltered
+                if item.lower().startswith(text.lower())
+            ]
 
     def on_touch_down(self, touch):
         super().on_touch_down(touch)
-        if (self.collide_point(touch.x, touch.y) or self.label_item.collide_point(*touch.pos)) \
-                and self._list_menu:
+        if (
+            self.collide_point(touch.x, touch.y)
+            or self.label_item.collide_point(*touch.pos)
+        ) and self._list_menu:
 
-            if self.center_y < Window.height/2:
+            if self.center_y < Window.height / 2:
                 ver_grow = "up"
                 self.anchor = self.ids.anchor_north
             else:
