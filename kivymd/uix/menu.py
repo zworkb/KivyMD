@@ -307,6 +307,10 @@ class MDDropdownMenu(ThemableBehavior, BoxLayout):
         # ---ESTABLISH VERTICAL GROWTH DIRECTION---
         if self.ver_growth is not None:
             ver_growth = self.ver_growth
+            if ver_growth == "down":
+                target_height = c[1] - self.border_margin
+            else:
+                target_height = Window.height - c[1] - self.border_margin
         else:
             # If there's enough space below us:
             if target_height <= c[1] - self.border_margin:

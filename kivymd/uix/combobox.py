@@ -68,9 +68,11 @@ import copy
 
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import ListProperty, BooleanProperty
+from kivy.properties import ListProperty, BooleanProperty, StringProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivymd.uix.dropdownitem import MDDropDownItemBehavior
 from kivymd.uix.menu import MDDropdownMenu
 
@@ -80,12 +82,25 @@ Builder.load_string("""
     canter:False
     MDTextField:
         id:label_item
+        text:root.text
         width:root.width
         pos:root.pos
+        
+    Widget:
+        id: anchor_south
+        size_hint:None, None
+        pos_hint:{'center_x':.5, 'center_y':0}
+        size:10,10
+
+    Widget:
+        id: anchor_north
+        size_hint:None, None
+        pos_hint:{'center_x':.5, 'center_y':1}
+        size:10,10
 """)
 
 
-class MDComboBox(MDDropDownItemBehavior, BoxLayout):
+class MDComboBox(MDDropDownItemBehavior, FloatLayout):
     """"""
     items_unfiltered = ListProperty()
     """
@@ -97,27 +112,37 @@ class MDComboBox(MDDropDownItemBehavior, BoxLayout):
     and the menu items be case sensitive?
     """
 
+    text = StringProperty("")
+
+    anchor = ObjectProperty(None)
+
     def __init__(self,  **kw):
         super().__init__(**kw)
         self.dropdown_bg = App.get_running_app().theme_cls.bg_normal
         Clock.schedule_once(self.after_init)
 
     def after_init(self, *a):
-        self.label_item.bind(text=self.on_text)
+        self.label_item.bind(text=self.on_label_text)
         self.items_unfiltered = copy.copy(self.items)
 
-    def on_text(self, _, text):
-        # self._drop_list.filter = text
+    def on_label_text(self, _, text):
+        self.text = text
         if self.case_sensitive:
             self.items = [item for item in self.items_unfiltered if item.startswith(text)]
         else:
-            self.items = [item for item in self.items_unfiltered if item.lower().startswith(text)]
-
+            self.items = [item for item in self.items_unfiltered if item.lower().startswith(text.lower())]
 
     def on_touch_down(self, touch):
         super().on_touch_down(touch)
         if (self.collide_point(touch.x, touch.y) or self.label_item.collide_point(*touch.pos)) \
                 and self._list_menu:
+
+            if self.center_y < Window.height/2:
+                ver_grow = "up"
+                self.anchor = self.ids.anchor_north
+            else:
+                ver_grow = "down"
+                self.anchor = self.ids.anchor_south
 
             self._drop_list = MDDropdownMenu(
                 _center=False,
@@ -127,8 +152,9 @@ class MDComboBox(MDDropDownItemBehavior, BoxLayout):
                 width_mult=self.dropdown_width_mult,
                 width_rectangle=1,
                 anim_duration=0,
+                ver_growth=ver_grow,
             )
-            self._drop_list.open(self)
+            self._drop_list.open(self.anchor)
 
     def on_items(self, instance, value):
         _list_menu = []
@@ -146,4 +172,4 @@ class MDComboBox(MDDropDownItemBehavior, BoxLayout):
         self.current_item = self.ids.label_item.text
         if self._drop_list is not None:
             self._drop_list.items = self._list_menu
-            self._drop_list.display_menu(self)
+            self._drop_list.display_menu(self.anchor)
