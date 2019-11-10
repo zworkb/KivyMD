@@ -91,17 +91,22 @@ Builder.load_string(
         text:root.text
         width:root.width
         pos:root.pos
+        hint_text:root.hint_text
+        helper_text:root.helper_text
+        helper_text_mode:root.helper_text_mode
         
     Widget:
         id: anchor_south
         size_hint:None, None
-        pos_hint:{'center_x':.5, 'center_y':0}
+        # pos_hint:{'center_x':0, 'center_y':0}
+        pos:(label_item.x, label_item.y + dp(15))
         size:10,10
 
     Widget:
         id: anchor_north
         size_hint:None, None
-        pos_hint:{'center_x':.5, 'center_y':1}
+        pos_hint:{'center_x':0, 'center_y':1}
+        # pos:label_item.pos
         size:10,10
 """
 )
@@ -119,6 +124,10 @@ class MDComboBox(MDDropDownItemBehavior, FloatLayout):
     """shall the matching between edit field
     and the menu items be case sensitive?
     """
+
+    hint_text = StringProperty("")
+    helper_text = StringProperty("")
+    helper_text_mode = StringProperty("persistent")
 
     text = StringProperty("")
 
@@ -146,6 +155,9 @@ class MDComboBox(MDDropDownItemBehavior, FloatLayout):
                 if item.lower().startswith(text.lower())
             ]
 
+        print(self._drop_list)
+        # self.create_menu()
+
     def on_touch_down(self, touch):
         super().on_touch_down(touch)
         if (
@@ -153,24 +165,27 @@ class MDComboBox(MDDropDownItemBehavior, FloatLayout):
             or self.label_item.collide_point(*touch.pos)
         ) and self._list_menu:
 
-            if self.center_y < Window.height / 2:
-                ver_grow = "up"
-                self.anchor = self.ids.anchor_north
-            else:
-                ver_grow = "down"
-                self.anchor = self.ids.anchor_south
+            self.create_menu()
 
-            self._drop_list = MDDropdownMenu(
-                _center=False,
-                items=self._list_menu,
-                background_color=self.dropdown_bg,
-                max_height=self.dropdown_max_height,
-                width_mult=self.dropdown_width_mult,
-                width_rectangle=1,
-                anim_duration=0,
-                ver_growth=ver_grow,
-            )
-            self._drop_list.open(self.anchor)
+    def create_menu(self):
+        if self.center_y < Window.height * .2:
+            ver_grow = "up"
+            self.anchor = self.ids.anchor_north
+        else:
+            ver_grow = "down"
+            self.anchor = self.ids.anchor_south
+
+        self._drop_list = MDDropdownMenu(
+            _center=False,
+            items=self._list_menu,
+            background_color=self.dropdown_bg,
+            max_height=self.dropdown_max_height,
+            width_mult=self.dropdown_width_mult,
+            width_rectangle=1,
+            anim_duration=0,
+            ver_growth=ver_grow,
+        )
+        self._drop_list.open(self.anchor)
 
     def on_items(self, instance, value):
         _list_menu = []
